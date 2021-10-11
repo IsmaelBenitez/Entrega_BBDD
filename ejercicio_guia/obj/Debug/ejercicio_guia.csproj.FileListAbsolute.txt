@@ -1,0 +1,10 @@
+C:\share\ejercicio_guia\bin\Debug\ejercicio_guia.exe.config
+C:\share\ejercicio_guia\bin\Debug\ejercicio_guia.exe
+C:\share\ejercicio_guia\bin\Debug\ejercicio_guia.pdb
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.csprojAssemblyReference.cache
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.Form1.resources
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.Properties.Resources.resources
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.csproj.GenerateResource.cache
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.csproj.CoreCompileInputs.cache
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.exe
+C:\share\ejercicio_guia\obj\Debug\ejercicio_guia.pdb
