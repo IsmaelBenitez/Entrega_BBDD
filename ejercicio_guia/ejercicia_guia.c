@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <pthread.h>
 
+int contador;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 void *AtenderCliente(void *socket)
 {
 	int sock_conn, ret;
@@ -18,52 +21,57 @@ void *AtenderCliente(void *socket)
 	char respuesta[512];
 	// INICIALITZACIONS
 	// Obrim el socket
-	//Se acaba de iniiciar
-	for(;;){
+	//Se acaba de iniici
+	int terminar=0;
 		
+	while (terminar==0){
+	//Se recibe la petición
+		printf ("Escuchando\n");
+		ret=read(sock_conn,peticion, sizeof(peticion));
+		printf ("Recibido\n");
+		peticion[ret]='\0';
+		printf ("Peticion: %s\n",peticion);
+		//Finaliza el proceso de recibir la peticion.
 		
+		//Vamos a ver que quieren
+		char *p =strtok(peticion,"/");
+		int codigo =atoi(p);
 		
-		int terminar=0;
-		
-		while (terminar==0){
-		//Se recibe la petición
-			printf ("Escuchando\n");
-			ret=read(sock_conn,peticion, sizeof(peticion));
-			printf ("Recibido\n");
-			peticion[ret]='\0';
-			printf ("Peticion: %s\n",peticion);
-			//Finaliza el proceso de recibir la peticion.
-			
-			//Vamos a ver que quieren
-			char *p =strtok(peticion,"/");
-			int codigo =atoi(p);
-			
-			//Ya sabemos que quieren
-			float resultado ;
-			if (codigo==1){
-				p=strtok(NULL,"/");
-				float numero=atof (p);
-				//En este caso queremos pasar de celsius a farenheit
-				resultado =1.8*numero+32;
-			}
-			else if (codigo==2){
-				p=strtok(NULL,"/");
-				float numero=atof (p);
-				resultado =(numero-32)*5/9;
-			}
-			else if (codigo==0){
-				terminar=1;
-			}
-			if (codigo!=0){
-				sprintf(respuesta,"%f\n",resultado);
-				write (sock_conn,respuesta, strlen(respuesta));
-			}
-			
+		//Ya sabemos que quieren
+		float resultado ;
+		if (codigo==1){
+			p=strtok(NULL,"/");
+			float numero=atof (p);
+			//En este caso queremos pasar de celsius a farenheit
+			resultado =1.8*numero+32;
 		}
-		// Se acabo el servicio para este cliente
-		close(sock_conn); 
+		else if (codigo==2){
+			p=strtok(NULL,"/");
+			float numero=atof (p);
+			resultado =(numero-32)*5/9;
+		}
+		else if (codigo==3){
+			resultado=contador;
+		}
+		else if (codigo==0){
+			terminar=1;
+		}
+		if (codigo!=0){
+			sprintf(respuesta,"%f\n",resultado);
+			write (sock_conn,respuesta, strlen(respuesta));
+		}
+		if(codigo==1||codigo==2)
+		{
+			pthread_mutex_lock(&mutex);
+			contador++;
+			pthread_mutex_unlock(&mutex);
+		}
 		
 	}
+	// Se acabo el servicio para este cliente
+	close(sock_conn); 
+		
+	
 	
 	
 }
@@ -73,6 +81,8 @@ int main(int argc, char *argv[])
 	struct sockaddr_in serv_adr;
 	char peticion[512];
 	char respuesta[512];
+
+	contador=0;
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -99,6 +109,7 @@ int main(int argc, char *argv[])
 		pthread_create(&thread[i],NULL,AtenderCliente,&sockets[i]);
 		i++;
 	}
+
 	
 	
 }
